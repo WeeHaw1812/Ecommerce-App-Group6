@@ -1,0 +1,17 @@
+.cart {
+    position: relative;
+}
+
+.cart-count {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 100%;
+    background: red;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 25px;
+    right: 8px;
+}

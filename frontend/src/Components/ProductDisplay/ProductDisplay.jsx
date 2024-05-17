@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
 import star_icon from "../../Assets/star_icon.png";
 import star_dull from "../../Assets/star_dull_icon.png";
-const propsDisplay = ({ productById }) => {
-  console.log(productById);
+import { ShopContext } from "../../Context/ShopContext";
+const ProductDisplay = ({ productById }) => {
+  const { addToCart } = useContext(ShopContext);
   return (
     <div className="flex px-[100px]">
       <div className="props-img flex gap-2">
@@ -67,4 +68,4 @@ const propsDisplay = ({ productById }) => {
   );
 };
 
-export default propsDisplay;
+export default ProductDisplay;

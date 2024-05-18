@@ -54,7 +54,12 @@ const ProductDisplay = ({ productById }) => {
           <p className="line-through text-xl text-gray-400">${productById.old_price}</p>
           <p className="text-xl text-red-600">${productById.new_price}</p>
         </div>
-        <button className="w-[200px] px-[40px] py-[10px] bg-red-500 text-white font-bold rounded-md">
+        <button
+          onClick={() => {
+            addToCart(productById.id);
+          }}
+          className="w-[200px] px-[40px] py-[10px] bg-red-500 text-white font-bold rounded-md"
+        >
           Add To Cart
         </button>
         <p className="font-bold text-sm">

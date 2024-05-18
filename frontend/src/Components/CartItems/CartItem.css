@@ -1,0 +1,18 @@
+/* Ẩn phần track */
+.scroll-cart::-webkit-scrollbar-track {
+    display: none;
+}
+
+/* Hiển thị thanh cuộn và thumb */
+.scroll-cart::-webkit-scrollbar {
+    width: 4px;
+    /* Độ rộng của thanh cuộn */
+}
+
+/* Màu của thanh cuộn */
+.scroll-cart::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Màu của thanh cuộn */
+    border-radius: 4px;
+    /* Độ cong của thanh cuộn */
+}

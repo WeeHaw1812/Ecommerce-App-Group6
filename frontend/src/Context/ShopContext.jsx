@@ -15,12 +15,32 @@ const ShopContextProvider = (props) => {
 
   const addToCart = (itemId) => {
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
-    console.log(cartItems);
   };
   const removeFromCart = (itemId) => {
+    setCartItems((prev) => {
+      const updatedCartItems = { ...prev };
+      updatedCartItems[itemId] = 0;
+      return updatedCartItems;
+    });
+  };
+
+  // tăng giảm số lượng trong cart (sau này còn thêm size loại...)
+  const incProductCart = (itemId) => {
+    setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
+  };
+  const decProductCart = (itemId) => {
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
   };
-  const contextValue = { all_product, cartItems, addToCart, removeFromCart };
+
+  console.log(cartItems);
+  const contextValue = {
+    all_product,
+    cartItems,
+    incProductCart,
+    decProductCart,
+    addToCart,
+    removeFromCart,
+  };
 
   return <ShopContext.Provider value={contextValue}>{props.children}</ShopContext.Provider>;
 };

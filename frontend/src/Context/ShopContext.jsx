@@ -32,7 +32,25 @@ const ShopContextProvider = (props) => {
     setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
   };
 
-  console.log(cartItems);
+  const getTotalPrice = () => {
+    let totalPrice = 0;
+    for (const item in cartItems) {
+      if (cartItems[item] > 0) {
+        const itemInfo = all_product.find((product) => product.id === Number(item));
+        if (itemInfo) {
+          totalPrice += itemInfo.new_price * cartItems[item];
+        }
+      }
+    }
+    return totalPrice;
+  };
+  const voucherCode = (code) => {
+    return getTotalPrice() * (code / 100);
+  };
+  // Ví dụ, nếu cartItems là {0: 2, 1: 0, 2: 3}, thì Object.values(cartItems) sẽ trả về [2, 0, 3].
+  const getTotalItemsInCart = () => {
+    return Object.values(cartItems).filter((itemCount) => itemCount > 0).length;
+  };
   const contextValue = {
     all_product,
     cartItems,
@@ -40,6 +58,9 @@ const ShopContextProvider = (props) => {
     decProductCart,
     addToCart,
     removeFromCart,
+    getTotalPrice,
+    voucherCode,
+    getTotalItemsInCart,
   };
 
   return <ShopContext.Provider value={contextValue}>{props.children}</ShopContext.Provider>;

@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import "./Navbar.css";
 import { Link } from "react-router-dom";
 import logo from "../../Assets/logo.png";
 import cart from "../../Assets/cart_icon.png";
+import { ShopContext } from "../../Context/ShopContext";
 const Navbar = () => {
   const [selectTab, setSelectTab] = useState("Shop");
+  const { getTotalItemsInCart } = useContext(ShopContext);
   return (
     <div className="w-full flex items-center justify-between p-[20px]">
       <Link to="/">
@@ -55,7 +57,7 @@ const Navbar = () => {
         </Link>
         <Link to={"/cart"}>
           <img className="cart cursor-pointer" src={cart} alt="" />
-          <span className="cart-count">8</span>
+          <span className="cart-count">{getTotalItemsInCart()}</span>
         </Link>
       </div>
     </div>

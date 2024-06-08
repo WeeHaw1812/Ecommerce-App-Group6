@@ -4,8 +4,29 @@ import { FaPlus, FaStar } from "react-icons/fa";
 import { IoFilterCircle } from "react-icons/io5";
 import "./ListProduct.css";
 import ReactPaginate from "react-paginate";
-import { MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import { MdDelete, MdEdit, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
+import { useEffect, useState } from "react";
 const ListProduct = () => {
+  const [allProduct, setAllProduct] = useState([]);
+  const fetchInfo = async () => {
+    await fetch("http://localhost:4000/allproduct")
+      .then((res) => res.json())
+      .then((data) => {
+        setAllProduct(data);
+      });
+  };
+  useEffect(() => {
+    fetchInfo();
+  }, []);
+  // More Button
+  const [openProductId, setOpenProductId] = useState(null);
+  const handleOpen = (idProduct) => {
+    if (openProductId === idProduct) {
+      setOpenProductId(null);
+    } else {
+      setOpenProductId(idProduct);
+    }
+  };
   return (
     <div className="h-full p-[10px]">
       <div className="h-max flex items-center justify-between">
@@ -38,33 +59,52 @@ const ListProduct = () => {
           <div className="font-semibold">Rating</div>
           <div></div>
         </div>
-        <div className="content-table grid grid-cols-7 items-center border-t-[1px] border-t-gray-300">
-          <div className="col-span-2 flex items-center gap-[10px] py-[10px]">
-            <img
-              className="w-[35px] h-[40px]"
-              src="https://i.pinimg.com/236x/75/67/33/7567333fbb8b5f126d5ab3e2eb518d2d.jpg"
-              alt=""
-            />
-            <div className="flex flex-col">
-              <p className="font-semibold text-sm">Cat Cute</p>
-              <p className="opacity-40 text-sm">922</p>
+        {allProduct.map((product, index) => {
+          return (
+            <div
+              key={index}
+              className="content-table grid grid-cols-7 items-center border-t-[1px] border-t-gray-300"
+            >
+              <div className="col-span-2 flex items-center gap-[10px] py-[10px]">
+                <img className="w-[35px] h-[40px]" src={product.image} alt="" />
+                <div className="flex flex-col">
+                  <p className="font-semibold text-sm">{product.name}</p>
+                  <p className="opacity-40 text-sm">description</p>
+                </div>
+              </div>
+              <p className="text-sm">${product.new_price}</p>
+              <p className="text-sm">90</p>
+              <div className="flex items-center gap-[5px]">
+                <div className="w-[5px] h-[5px] bg-green-400 rounded-full"></div>
+                <p className="text-sm">{product.category}</p>
+              </div>
+              <div className="rating flex items-center gap-[5px]">
+                <FaStar className="w-[13px] h-[13px] text-yellow-400" />
+                <p className="text-sm">4.9</p>
+                <p className="opacity-40 text-sm">35 Reviews</p>
+              </div>
+              <div className="flex justify-center relative cursor-pointer">
+                <CgMoreVertical
+                  onClick={() => {
+                    handleOpen(product.id);
+                  }}
+                />
+                {openProductId === product.id && (
+                  <div className="absolute top-[25px] left-[10px] w-max h-max p-[10px] bg-slate-100 text-xs z-10">
+                    <div className="flex items-center gap-[5px] hover:opacity-50 cursor-pointer">
+                      <MdEdit />
+                      <p>Edit Product</p>
+                    </div>
+                    <div className=" flex items-center gap-[5px] hover:opacity-50 cursor-pointer">
+                      <MdDelete />
+                      <p className="">Remove Product</p>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          <p className="text-sm">$ 585.54</p>
-          <p className="text-sm">90</p>
-          <div className="flex items-center gap-[5px]">
-            <div className="w-[5px] h-[5px] bg-green-400 rounded-full"></div>
-            <p className="text-sm">Men</p>
-          </div>
-          <div className="rating flex items-center gap-[5px]">
-            <FaStar className="w-[13px] h-[13px] text-yellow-400" />
-            <p className="text-sm">4.9</p>
-            <p className="opacity-40 text-sm">35 Reviews</p>
-          </div>
-          <div className="flex justify-center">
-            <CgMoreVertical />
-          </div>
-        </div>
+          );
+        })}
       </div>
       <div className="flex items-center justify-between">
         <p>Show 6 of 145</p>

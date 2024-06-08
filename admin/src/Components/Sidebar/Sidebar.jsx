@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import productCart from "../../assets/Product_Cart.svg";
 import productList from "../../assets/Product_list_icon.svg";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 const Sidebar = () => {
+  const location = useLocation();
   const [active, setActive] = useState("productList");
+  useEffect(() => {
+    if (location.pathname === "/addproduct") {
+      setActive("productCart");
+    } else if (location.pathname === "/products") {
+      setActive("productList");
+    }
+  }, [location]);
   const handleSetActive = (choose) => {
     setActive(choose);
   };

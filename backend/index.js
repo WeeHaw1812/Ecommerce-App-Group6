@@ -2,7 +2,6 @@ const port = 4000;
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 const cors = require("cors");
@@ -39,7 +38,7 @@ app.post("/upload", upload.single("product"), (req, res) => {
 
 // Router
 app.use("/product", productRouter);
-app.use("user", usersRouter);
+app.use("/user", usersRouter);
 
 app.listen(port, (error) => {
   if (!error) {

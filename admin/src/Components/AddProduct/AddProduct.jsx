@@ -9,6 +9,7 @@ const AddProduct = () => {
     new_price: "",
     old_price: "",
   });
+
   const imageHandler = (e) => {
     setImage(e.target.files[0]);
   };

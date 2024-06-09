@@ -8,6 +8,7 @@ import { MdDelete, MdEdit, MdNavigateBefore, MdNavigateNext } from "react-icons/
 import { useEffect, useState } from "react";
 const ListProduct = () => {
   const [allProduct, setAllProduct] = useState([]);
+  // Get All
   const fetchInfo = async () => {
     await fetch("http://localhost:4000/allproduct")
       .then((res) => res.json())
@@ -18,6 +19,19 @@ const ListProduct = () => {
   useEffect(() => {
     fetchInfo();
   }, []);
+
+  // Remove Product
+  const removeProduct = async (id) => {
+    await fetch("http://localhost:4000/deleteproduct", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: id }),
+    });
+    await fetchInfo();
+  };
   // More Button
   const [openProductId, setOpenProductId] = useState(null);
   const handleOpen = (idProduct) => {
@@ -27,6 +41,7 @@ const ListProduct = () => {
       setOpenProductId(idProduct);
     }
   };
+
   return (
     <div className="h-full p-[10px]">
       <div className="h-max flex items-center justify-between">
@@ -90,14 +105,19 @@ const ListProduct = () => {
                   }}
                 />
                 {openProductId === product.id && (
-                  <div className="absolute top-[25px] left-[10px] w-max h-max p-[10px] bg-slate-100 text-xs z-10">
+                  <div className="absolute top-[25px] left-[10px] w-max h-max p-[10px] bg-slate-100 text-xs z-10 flex flex-col gap-[5px]">
                     <div className="flex items-center gap-[5px] hover:opacity-50 cursor-pointer">
                       <MdEdit />
-                      <p>Edit Product</p>
+                      <p className="text-xs">Edit Product</p>
                     </div>
-                    <div className=" flex items-center gap-[5px] hover:opacity-50 cursor-pointer">
+                    <div
+                      onClick={() => {
+                        removeProduct(product.id);
+                      }}
+                      className=" flex items-center gap-[5px] hover:opacity-50 cursor-pointer"
+                    >
                       <MdDelete />
-                      <p className="">Remove Product</p>
+                      <p className="text-xs">Remove Product</p>
                     </div>
                   </div>
                 )}

@@ -9,6 +9,7 @@ const AddProduct = () => {
     new_price: "",
     old_price: "",
   });
+
   const imageHandler = (e) => {
     setImage(e.target.files[0]);
   };
@@ -37,7 +38,7 @@ const AddProduct = () => {
     if (responseData.success) {
       product.image = responseData.image_url;
       console.log("Product", product);
-      await fetch("http://localhost:4000/addproduct", {
+      await fetch("http://localhost:4000/product", {
         method: "POST",
         headers: {
           Accept: "application/json",

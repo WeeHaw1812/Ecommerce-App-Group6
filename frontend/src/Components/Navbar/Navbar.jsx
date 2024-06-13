@@ -50,11 +50,23 @@ const Navbar = () => {
         </li>
       </ul>
       <div className="flex items-center gap-5">
-        <Link to={"/login"}>
-          <button className="w-[80px] h-[40px] bg-slate-600 rounded-full text-white m-auto">
-            Login
+        {localStorage.getItem("auth-token") ? (
+          <button
+            className="w-[80px] h-[40px] bg-slate-600 rounded-full text-white m-auto"
+            onClick={() => {
+              localStorage.removeItem("auth-token");
+              window.location.replace("/");
+            }}
+          >
+            Logout
           </button>
-        </Link>
+        ) : (
+          <Link to={"/login"}>
+            <button className="w-[80px] h-[40px] border-[1px] border-slate-600 rounded-full text-red-500 font-semibold">
+              Login
+            </button>
+          </Link>
+        )}
         <Link to={"/cart"}>
           <img className="cart cursor-pointer" src={cart} alt="" />
           <span className="cart-count">{getTotalItemsInCart()}</span>

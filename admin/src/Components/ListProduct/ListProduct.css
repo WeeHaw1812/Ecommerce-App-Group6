@@ -1,0 +1,49 @@
+.search-input {
+    background: none;
+    font-size: 14px;
+}
+
+.search-input::placeholder {
+    color: black;
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+/*======Pagination CSS=====*/
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.page-item {
+    background: rgb(203 213 225);
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-item.disabled {
+    opacity: 0.4;
+}
+
+.page-item.active {
+    background: rgb(250 204 21);
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    font-size: 12px;
+    font-weight: 600;
+    color: aliceblue;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import star_icon from "../../Assets/star_icon.png";
 import star_dull from "../../Assets/star_dull_icon.png";
 import { ShopContext } from "../../Context/ShopContext";
+import { toast } from "react-toastify";
 const ProductDisplay = ({ productById }) => {
   const { addToCart } = useContext(ShopContext);
   return (
@@ -57,6 +58,7 @@ const ProductDisplay = ({ productById }) => {
         <button
           onClick={() => {
             addToCart(productById.id);
+            toast.success("Add Product successfully");
           }}
           className="w-[200px] px-[40px] py-[10px] bg-red-500 text-white font-bold rounded-md"
         >

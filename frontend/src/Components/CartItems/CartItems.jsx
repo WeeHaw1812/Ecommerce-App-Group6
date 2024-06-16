@@ -54,7 +54,7 @@ const CartItems = () => {
       discount = 0.5;
     }
 
-    const finalPrice = totalPrice - (totalPrice * discount) + 30;
+    const finalPrice = totalPrice - totalPrice * discount + 30;
     return finalPrice;
   };
 
@@ -83,7 +83,7 @@ const CartItems = () => {
                     <div className="flex flex-col col-span-2">
                       <div className="flex gap-2 items-center font-bold">
                         <p className="w-[200px] truncate">{e.name}</p>
-                        <p>| Women</p>
+                        <p>| {e.category}</p>
                       </div>
                       <p>Size: L</p>
                     </div>

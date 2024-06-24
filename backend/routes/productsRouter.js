@@ -4,9 +4,21 @@ const productsRouter = express.Router();
 
 // Get All Product API
 productsRouter.get("/", async (req, res) => {
-  let products = await Products.find({});
-  console.log("All Product Fetched");
-  res.send(products);
+  var page = req.query.page;
+  var limit = req.query.limit || 6;
+  if (page) {
+    //get Page
+    page = parseInt(page);
+    limit = parseInt(limit);
+    var skip = (page - 1) * limit;
+    let products = await Products.find({}).skip(skip).limit(limit);
+    console.log("Fetched Page " + page + ", Limit " + limit + " Products");
+    res.send(products);
+  } else {
+    let products = await Products.find({});
+    console.log("All Product Fetched");
+    res.send(products);
+  }
 });
 
 // Add Product API
@@ -65,4 +77,5 @@ productsRouter.put("/", async (req, res) => {
     id: req.body.id,
   });
 });
+
 module.exports = productsRouter;

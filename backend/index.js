@@ -9,9 +9,22 @@ app.use(express.json());
 app.use(cors());
 const productRouter = require("./routes/productsRouter");
 const usersRouter = require("./routes/usersRouter");
+const products = require("./models/products");
 // Database Connection with MongoDB
 mongoose.connect("mongodb+srv://loneacc195:195@cluster0.qf5rb9y.mongodb.net/e-commerce");
-
+// Fake Data for Pagination
+// for (let i = 0; i < 20; i++) {
+//   {
+//     products.create({
+//       id: i + 1,
+//       name: "It's love - " + i,
+//       new_price: 18,
+//       old_price: 19,
+//       image: "http://localhost:4000/images/product_1717948992009.png",
+//       category: "women",
+//     });
+//   }
+// }
 // API Creation
 app.get("/", (req, res) => {
   res.send("Express App is Running");

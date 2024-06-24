@@ -16,7 +16,7 @@ const Sidebar = () => {
     setActive(choose);
   };
   return (
-    <div className="h-screen flex flex-col gap-5 p-[20px] bg-slate-100">
+    <div className="h-full flex flex-col gap-5 p-[20px] bg-slate-100">
       <Link to={"/addproduct"}>
         <div
           className={`rounded-lg p-3 flex items-center gap-5 cursor-pointer ${

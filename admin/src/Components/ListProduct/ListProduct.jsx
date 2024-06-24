@@ -1,6 +1,6 @@
-import { CgImport, CgMoreVertical } from "react-icons/cg";
+import { CgExport, CgImport, CgMoreVertical } from "react-icons/cg";
 import { CiSearch } from "react-icons/ci";
-import { FaPlus, FaStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import { IoFilterCircle } from "react-icons/io5";
 import "./ListProduct.css";
 import ReactPaginate from "react-paginate";
@@ -8,6 +8,10 @@ import { MdDelete, MdEdit, MdNavigateBefore, MdNavigateNext } from "react-icons/
 import { useEffect, useState } from "react";
 const ListProduct = () => {
   const [allProduct, setAllProduct] = useState([]);
+  const [productPage, setProductPage] = useState([]);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(6);
+
   // Get All
   const fetchInfo = async () => {
     await fetch("http://localhost:4000/product")
@@ -19,7 +23,22 @@ const ListProduct = () => {
   useEffect(() => {
     fetchInfo();
   }, []);
-
+  // Get Product Page
+  const fetchProductPage = async () => {
+    await fetch(`http://localhost:4000/product?page=${page}&limit=${limit}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setProductPage(data);
+      });
+  };
+  useEffect(() => {
+    fetchProductPage();
+  }, [page, limit]);
+  // Change Page
+  // Handle Page Click
+  const handlePageClick = (selectedItem) => {
+    setPage(parseInt(selectedItem.selected) + 1); // +1 because ReactPaginate uses 0-based index
+  };
   // Remove Product
   const removeProduct = async (id) => {
     await fetch("http://localhost:4000/product", {
@@ -30,6 +49,7 @@ const ListProduct = () => {
       },
       body: JSON.stringify({ id: id }),
     });
+    await fetchProductPage();
     await fetchInfo();
   };
   // More Button
@@ -43,29 +63,30 @@ const ListProduct = () => {
   };
 
   return (
-    <div className="h-full p-[10px]">
+    <div className="h-full min-h-[535px] p-[10px] flex flex-col justify-center">
+      {/**========SEARCH,EXPORT====== */}
       <div className="h-max flex items-center justify-between">
         <div className="search flex items-center gap-[10px] p-[10px] bg-slate-300 rounded-full">
           <CiSearch style={{ height: "18px", width: "17px" }} />
           <input className="search-input" type="text" placeholder="Search product..." />
         </div>
-        <div className="multi-option flex items-center gap-[20px]">
-          <div className="filter flex items-center bg-slate-300 p-[10px] text-[14px] rounded-full gap-[5px]">
+        <div className="multi-option flex items-center gap-[10px]">
+          <div className="filter flex items-center bg-slate-300 p-[10px] text-[14px] rounded-full gap-[5px] cursor-pointer">
             <IoFilterCircle />
             <p>Filter</p>
           </div>
-          <div className="import flex items-center bg-slate-300 p-[10px] text-[14px] rounded-full gap-[5px]">
+          <div className="import flex items-center bg-slate-300 p-[10px] text-[14px] rounded-full gap-[5px] cursor-pointer">
             <CgImport />
             <p>Imports</p>
           </div>
-          <div className="addProduct flex items-center bg-yellow-400 p-[10px] text-[14px] rounded-full gap-[5px]">
-            <FaPlus />
-            <p>New Product</p>
+          <div className="addProduct flex items-center bg-slate-300 p-[10px] text-[14px] rounded-full gap-[5px] cursor-pointer">
+            <CgExport />
+            <p>Exports</p>
           </div>
         </div>
       </div>
       {/**========TABLE====== */}
-      <div className="w-full h-max min-h-[400px] px-[20px] bg-white my-[10px] rounded-md flex flex-col">
+      <div className="w-full h-max min-h-[410px] px-[20px] bg-white my-[10px] rounded-md flex flex-col">
         <div className="title-table grid grid-cols-7 py-[10px]">
           <div className="col-span-2 font-semibold">Item Name</div>
           <div className="font-semibold">Price</div>
@@ -74,7 +95,7 @@ const ListProduct = () => {
           <div className="font-semibold">Rating</div>
           <div></div>
         </div>
-        {allProduct.map((product, index) => {
+        {productPage.map((product, index) => {
           return (
             <div
               key={index}
@@ -126,8 +147,25 @@ const ListProduct = () => {
           );
         })}
       </div>
+      {/**========PAGINATION====== */}
       <div className="flex items-center justify-between">
-        <p>Show 6 of 145</p>
+        <div className="flex items-center gap-[10px]">
+          <p>Show</p>
+          <select
+            className="w-[36px] h-[25px] px-[3px] bg-slate-300 text-sm font-medium rounded-md"
+            value={limit}
+            onChange={(e) => {
+              setLimit(parseInt(e.target.value));
+            }}
+          >
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+          <p>of {allProduct.length} products</p>
+        </div>
+
         <ReactPaginate
           previousLabel={<MdNavigateBefore />}
           nextLabel={<MdNavigateNext />}
@@ -140,12 +178,12 @@ const ListProduct = () => {
           breakLabel="..."
           breakClassName="page-item"
           breakLinkClassName="page-link"
-          pageCount={10}
+          pageCount={Math.ceil(allProduct.length / limit)}
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
           containerClassName="pagination"
           activeClassName="active"
-          //onPageChange
+          onPageChange={handlePageClick}
         />
       </div>
     </div>

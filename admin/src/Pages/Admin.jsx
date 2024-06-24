@@ -5,7 +5,7 @@ import AddProduct from "../Components/AddProduct/AddProduct";
 
 const Admin = () => {
   return (
-    <div className="">
+    <div className="h-full">
       <div className="flex">
         <div className="w-1/5">
           <Sidebar />

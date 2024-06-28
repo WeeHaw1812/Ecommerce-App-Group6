@@ -20,7 +20,16 @@ productsRouter.get("/", async (req, res) => {
     res.send(products);
   }
 });
-
+// Get Product By ID
+productsRouter.get("/:productId", async (req, res) => {
+  const productId = req.params.productId;
+  const product = await Products.findOne({ id: productId });
+  if (product) {
+    res.send(product);
+  } else {
+    res.send("Not Found Product ID" + productId);
+  }
+});
 // Add Product API
 productsRouter.post("/", async (req, res) => {
   let products = await Products.find({});
@@ -35,6 +44,7 @@ productsRouter.post("/", async (req, res) => {
   const product = new Products({
     id: id,
     name: req.body.name,
+    description: req.body.description,
     image: req.body.image,
     category: req.body.category,
     new_price: req.body.new_price,
@@ -65,6 +75,7 @@ productsRouter.put("/", async (req, res) => {
     { id: req.body.id },
     {
       name: req.body.name,
+      description: req.body.description,
       image: req.body.image,
       category: req.body.category,
       old_price: req.body.old_price,

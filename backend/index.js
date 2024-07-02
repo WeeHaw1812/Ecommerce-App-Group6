@@ -9,6 +9,7 @@ app.use(express.json());
 app.use(cors());
 const productRouter = require("./routes/productsRouter");
 const usersRouter = require("./routes/usersRouter");
+const ordersRouter = require("./routes/ordersRouter");
 const products = require("./models/products");
 // Database Connection with MongoDB
 mongoose.connect("mongodb+srv://loneacc195:195@cluster0.qf5rb9y.mongodb.net/e-commerce");
@@ -52,6 +53,7 @@ app.post("/upload", upload.single("product"), (req, res) => {
 // Router
 app.use("/product", productRouter);
 app.use("/user", usersRouter);
+app.use("/order", ordersRouter);
 
 app.listen(port, (error) => {
   if (!error) {

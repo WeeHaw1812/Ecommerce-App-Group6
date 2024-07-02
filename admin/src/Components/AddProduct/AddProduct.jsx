@@ -4,6 +4,7 @@ const AddProduct = () => {
   const [image, setImage] = useState(false);
   const [productDetails, setProductDetails] = useState({
     name: "",
+    description: "",
     image: "",
     category: "Women",
     new_price: "",
@@ -66,9 +67,20 @@ const AddProduct = () => {
             className="w-full h-[50px] border-[1px] border-gray-500 p-[10px] rounded-sm"
           />
         </div>
+        <div className="description flex flex-col gap-[10px]">
+          <p>Description</p>
+          <input
+            type="text"
+            placeholder="Type here"
+            name="description"
+            value={productDetails.description}
+            onChange={changeHandler}
+            className="w-full h-[50px] border-[1px] border-gray-500 p-[10px] rounded-sm"
+          />
+        </div>
         <div className="price w-full flex gap-[30px]">
           <div className="w-1/2 flex flex-col gap-[10px]">
-            <p>Price</p>
+            <p>Old Price</p>
             <input
               type="text"
               placeholder="Type here"
@@ -79,7 +91,7 @@ const AddProduct = () => {
             />
           </div>
           <div className="w-1/2 flex flex-col gap-[10px]">
-            <p> Offer Price</p>
+            <p> New Price</p>
             <input
               type="text"
               placeholder="Type here"

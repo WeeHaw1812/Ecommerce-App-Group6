@@ -4,12 +4,19 @@ const Users = require("../models/users");
 const usersRouter = express.Router();
 const fetchUser = require("../middleware/middleware");
 
+//SignUp
 usersRouter.post("/", async (req, res) => {
-  let check = await Users.findOne({ email: req.body.email });
-  if (check) {
+  let checkEmail = await Users.findOne({ email: req.body.email });
+  if (checkEmail) {
     return res
       .status(400)
       .json({ success: false, error: "Existing user found with same email address" });
+  }
+  let checkUserName = await Users.findOne({ name: req.body.username });
+  if (checkUserName) {
+    return res
+      .status(400)
+      .json({ success: false, error: "Existing user found with same username" });
   }
   let cart = {};
   for (let i = 0; i < 300; i++) {
@@ -30,10 +37,38 @@ usersRouter.post("/", async (req, res) => {
   const token = jwt.sign(data, "secret_ecom");
   res.json({
     success: true,
+    userID: user.id,
     token: token,
   });
 });
-
+//Get All User
+usersRouter.get("/", async (req, res) => {
+  var page = req.query.page;
+  var limit = req.query.limit || 6;
+  if (page) {
+    //get Page
+    page = parseInt(page);
+    limit = parseInt(limit);
+    var skip = (page - 1) * limit;
+    let users = await Users.find({}).skip(skip).limit(limit);
+    console.log("Fetched Page " + page + ", Limit " + limit + " Users");
+    res.send(users);
+  } else {
+    let users = await Users.find({});
+    console.log("All User Fetched");
+    res.send(users);
+  }
+});
+// Get User By ID
+usersRouter.get("/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  const user = await Users.findById(userId);
+  if (user) {
+    res.send(user);
+  } else {
+    res.send("Not Found user ID" + userId);
+  }
+});
 // Login
 usersRouter.post("/login", async (req, res) => {
   let user = await Users.findOne({

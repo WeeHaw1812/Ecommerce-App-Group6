@@ -15,6 +15,16 @@ const userSchema = new Schema({
   cartData: {
     type: Object,
   },
+  orders: [
+    {
+      type: String,
+    },
+  ],
+  role: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
+  },
   date: {
     type: Date,
     default: Date.now,

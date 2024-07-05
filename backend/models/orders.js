@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+
 const orderSchema = new Schema({
   orderNumber: {
     type: String,
@@ -29,13 +30,16 @@ const orderSchema = new Schema({
   ],
   totalAmount: {
     type: Number,
-    require: true,
+    required: true,
   },
   shippingAddress: {
     type: String,
-    require: true,
+    required: true,
   },
-  phoneNumber: String,
+  phoneNumber: {
+    type: String,
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -46,5 +50,6 @@ const orderSchema = new Schema({
     default: "pending",
   },
 });
-const orders = mongoose.model("Order", orderSchema);
-module.exports = orders;
+
+const Order = mongoose.model("Order", orderSchema);
+module.exports = Order;

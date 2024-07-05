@@ -13,6 +13,8 @@ const Navbar = () => {
     title = "Add Product";
   } else if (location.pathname === "/products") {
     title = "Products";
+  } else if (location.pathname === "/order") {
+    title = "Order";
   }
   return (
     <div className="h-[65px] flex items-center justify-between">

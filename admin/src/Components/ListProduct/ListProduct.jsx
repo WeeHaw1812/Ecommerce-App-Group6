@@ -132,8 +132,8 @@ const ListProduct = () => {
               <div className="col-span-2 flex items-center gap-[10px] py-[10px]">
                 <img className="w-[35px] h-[40px]" src={product.image} alt="" />
                 <div className="flex flex-col">
-                  <p className="font-semibold text-sm">{product.name}</p>
-                  <p className="opacity-40 text-sm">{product.description}</p>
+                  <p className="font-semibold text-sm truncate w-[200px]">{product.name}</p>
+                  <p className="opacity-40 text-sm truncate w-[100px]">{product.description}</p>
                 </div>
               </div>
               <p className="text-sm">${product.old_price}</p>

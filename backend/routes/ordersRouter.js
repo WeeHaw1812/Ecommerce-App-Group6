@@ -57,6 +57,7 @@ ordersRouter.post("/", async (req, res) => {
     const newOrder = new Orders({
       orderNumber: orderNumber,
       customer: req.body.customer,
+      fullName: req.body.fullName,
       items: req.body.items,
       totalAmount: req.body.totalAmount,
       shippingAddress: req.body.shippingAddress,

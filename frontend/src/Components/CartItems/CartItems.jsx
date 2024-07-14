@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./CartItem.css";
 import { ShopContext } from "../../Context/ShopContext";
 import { RiSubtractFill } from "react-icons/ri";
 import { GoPlus } from "react-icons/go";
 import VoucherCode from "../VoucherCode/voucherCode";
 import { toast } from "react-toastify";
+import ProceedOrder from "../ProceedOrder/ProceedOrder";
 
 const CartItems = () => {
   const {
@@ -42,6 +43,7 @@ const CartItems = () => {
       return null;
     }
   };
+
   const calculateFinalPrice = () => {
     const totalPrice = getTotalPrice();
     let discount = 0;
@@ -54,14 +56,30 @@ const CartItems = () => {
       discount = 0.5;
     }
 
-    const finalPrice = totalPrice - totalPrice * discount + 30;
+    const finalPrice = totalPrice - totalPrice * discount + 15;
     return finalPrice;
   };
+  const [totalAmount, setTotalAmount] = useState(0);
+
+  // useEffect để cập nhật totalAmount mỗi khi applyCode hoặc totalPrice thay đổi
+  useEffect(() => {
+    const totalPrice = getTotalPrice();
+    const finalPrice = calculateFinalPrice(totalPrice, applyCode);
+    setTotalAmount(finalPrice);
+  }, [applyCode, getTotalPrice]);
 
   const totalItems = getTotalItemsInCart();
+  const [openProceed, setOpenProceed] = useState(false);
+  const handleOpenProceed = () => {
+    setOpenProceed(true);
+  };
+
+  const handleCloseProceed = () => {
+    setOpenProceed(false);
+  };
 
   return (
-    <div className="px-[50px] flex gap-[20px]">
+    <div className="px-[50px] flex gap-[20px] relative">
       <div className="products w-2/3 ">
         <div className="w-full flex justify-between pb-[10px] border-b-black border-b-[1px] text-xl font-medium">
           <p>Shopping Cart</p>
@@ -142,7 +160,7 @@ const CartItems = () => {
             {/**Render voucherCode */}
             {renderDiscount()}
             <div className="border-dashed border-b-[2px] border-gray-400 pb-[5px] flex justify-between">
-              <p>Vat & Tax</p> <p>$30</p>
+              <p>Vat & Tax</p> <p>$15</p>
             </div>
             <div className="flex justify-between">
               <p>Total Price</p> <p>${calculateFinalPrice()}</p>
@@ -168,8 +186,20 @@ const CartItems = () => {
             </button>
           </div>
         </div>
-        <button className="w-[300px] text-white bg-red-500 p-[10px]">Proceed To Order</button>
+        <button
+          className="w-[300px] text-white bg-red-500 p-[10px]"
+          onClick={() => {
+            handleOpenProceed();
+          }}
+        >
+          Proceed To Order
+        </button>
       </div>
+      {openProceed && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <ProceedOrder handleClose={handleCloseProceed} totalPrice={totalAmount} />
+        </div>
+      )}
     </div>
   );
 };

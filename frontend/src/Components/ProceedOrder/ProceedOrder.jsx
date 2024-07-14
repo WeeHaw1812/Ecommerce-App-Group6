@@ -65,6 +65,7 @@ const ProceedOrder = ({ handleClose, totalPrice }) => {
     console.log("Order Items", orderItems);
     const orderData = {
       customer: userId,
+      fullName: fullName,
       items: orderItems,
       totalAmount: getTotalPrice(),
       shippingAddress: address,

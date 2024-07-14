@@ -1,89 +1,98 @@
 import { CgExport, CgImport, CgMoreVertical } from "react-icons/cg";
 import { CiSearch } from "react-icons/ci";
-import { FaStar } from "react-icons/fa";
 import { IoFilterCircle } from "react-icons/io5";
 import ReactPaginate from "react-paginate";
 import { MdDelete, MdEdit, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { useEffect, useState } from "react";
-import UpdateProduct from "../UpdateProduct/UpdateProduct";
-const Order = () => {
-  const [allProduct, setAllProduct] = useState([]);
-  const [productPage, setProductPage] = useState([]);
+import UpdateOrder from "../UpdateOrder/UpdateOrder";
+import "./ListOrder.css";
+const ListOrder = () => {
+  const [allOrder, setAllOrder] = useState([]);
+  const [orderPage, setOrderPage] = useState([]);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(6);
 
   // Get All for Pagination
   const fetchInfo = async () => {
-    await fetch("http://localhost:4000/product")
+    await fetch("http://localhost:4000/order")
       .then((res) => res.json())
       .then((data) => {
-        setAllProduct(data);
+        setAllOrder(data);
       });
   };
   useEffect(() => {
     fetchInfo();
   }, []);
-  // Get Product Page
-  const fetchProductPage = async () => {
-    await fetch(`http://localhost:4000/product?page=${page}&limit=${limit}`)
+  // Get order Page
+  const fetchOrderPage = async () => {
+    await fetch(`http://localhost:4000/order?page=${page}&limit=${limit}`)
       .then((res) => res.json())
       .then((data) => {
-        setProductPage(data);
+        setOrderPage(data);
       });
   };
   useEffect(() => {
-    fetchProductPage();
+    fetchOrderPage();
   }, [page, limit]);
   // Change Page
   // Handle Page Click
   const handlePageClick = (selectedItem) => {
     setPage(parseInt(selectedItem.selected) + 1); // +1 because ReactPaginate uses 0-based index
   };
-  // Remove Product
-  const removeProduct = async (id) => {
-    await fetch("http://localhost:4000/product", {
+  // Remove order
+  const removeOrder = async (id) => {
+    await fetch(`http://localhost:4000/order/${id}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ id: id }),
     });
-    await fetchProductPage();
+    await fetchOrderPage();
     await fetchInfo();
   };
   // More Button
-  const [openProductId, setOpenProductId] = useState(null);
-  const handleOpen = (idProduct) => {
-    if (openProductId === idProduct) {
-      setOpenProductId(null);
+  const [openOrderId, setOpenOrderId] = useState(null);
+  const handleOpen = (idOrder) => {
+    if (openOrderId === idOrder) {
+      setOpenOrderId(null);
     } else {
-      setOpenProductId(idProduct);
+      setOpenOrderId(idOrder);
     }
   };
   // Update Modal
-  const [openUpdateProductModalById, setUpdateProductModal] = useState(null);
-  const openUpdateModal = (idProduct) => {
-    if (openUpdateProductModalById === idProduct) {
-      setUpdateProductModal(null);
+  const [openUpdateOrderModalById, setUpdateOrderModal] = useState(null);
+  const openUpdateModal = (idOrder) => {
+    if (openUpdateOrderModalById === idOrder) {
+      setUpdateOrderModal(null);
     } else {
-      setUpdateProductModal(idProduct);
+      setUpdateOrderModal(idOrder);
     }
   };
   const closeUpdateModal = () => {
-    setUpdateProductModal(null);
+    setUpdateOrderModal(null);
   };
   const updateSuccess = () => {
-    fetchProductPage();
+    fetchOrderPage();
   };
-
+  const statusColor = (status) => {
+    if (status === "pending") {
+      return "bg-yellow-600";
+    } else if (status === "processing") {
+      return "bg-blue-600";
+    } else if (status === "shipped") {
+      return "bg-orange-600";
+    } else if (status === "delivered") {
+      return "bg-green-600";
+    }
+  };
   return (
     <div className="h-full min-h-[535px] p-[10px] flex flex-col justify-center">
       {/**========SEARCH,EXPORT====== */}
       <div className="h-max flex items-center justify-between">
         <div className="search flex items-center gap-[10px] p-[10px] bg-slate-300 rounded-full">
           <CiSearch style={{ height: "18px", width: "17px" }} />
-          <input className="search-input" type="text" placeholder="Search product..." />
+          <input className="search-input" type="text" placeholder="Search order..." />
         </div>
         <div className="multi-option flex items-center gap-[10px]">
           <div className="filter flex items-center bg-slate-300 p-[10px] text-[14px] rounded-full gap-[5px] cursor-pointer">
@@ -94,7 +103,7 @@ const Order = () => {
             <CgImport />
             <p>Imports</p>
           </div>
-          <div className="addProduct flex items-center bg-slate-300 p-[10px] text-[14px] rounded-full gap-[5px] cursor-pointer">
+          <div className="addOrder flex items-center bg-slate-300 p-[10px] text-[14px] rounded-full gap-[5px] cursor-pointer">
             <CgExport />
             <p>Exports</p>
           </div>
@@ -102,25 +111,26 @@ const Order = () => {
       </div>
       {/**========TABLE====== */}
       <div className="w-full h-max min-h-[410px] px-[20px] bg-white my-[10px] rounded-md flex flex-col">
-        <div className="title-table grid grid-cols-7 py-[10px]">
-          <div className="col-span-2 font-semibold">Item Name</div>
-          <div className="font-semibold">Old Price</div>
-          <div className="font-semibold ">New Price</div>
-          <div className="font-semibold">Category</div>
-          <div className="font-semibold">Rating</div>
+        <div className="title-table grid grid-cols-11 py-[10px]">
+          <div className="font-semibold col-span-2">Order Number</div>
+          <div className="font-semibold flex justify-center">Items</div>
+          <div className="font-semibold flex justify-center col-span-2">Total Amount</div>
+          <div className="font-semibold col-span-2">Shipping Address</div>
+          <div className="font-semibold flex justify-center col-span-2">Phone Number</div>
+          <div className="font-semibold flex justify-center">Status</div>
           <div></div>
         </div>
-        {/**Sử dụng map theo Product Page*/}
-        {productPage.map((product, index) => {
+        {/**Sử dụng map theo order Page*/}
+        {orderPage.map((order, index) => {
           return (
             <div
               key={index}
-              className="content-table grid grid-cols-7 items-center border-t-[1px] border-t-gray-300"
+              className="content-table grid grid-cols-11 items-center border-t-[1px] border-t-gray-300 py-[10px]"
             >
-              {openUpdateProductModalById === product.id && (
+              {openUpdateOrderModalById === order._id && (
                 <div className="fixed inset-0 flex items-center justify-center">
-                  <UpdateProduct
-                    idProduct={product.id}
+                  <UpdateOrder
+                    idOrder={order._id}
                     closeModal={closeUpdateModal}
                     updateSuccess={() => {
                       updateSuccess();
@@ -128,49 +138,49 @@ const Order = () => {
                   />
                 </div>
               )}
-              <div className="col-span-2 flex items-center gap-[10px] py-[10px]">
-                <img className="w-[35px] h-[40px]" src={product.image} alt="" />
-                <div className="flex flex-col">
-                  <p className="font-semibold text-sm">{product.name}</p>
-                  <p className="opacity-40 text-sm">{product.description}</p>
-                </div>
-              </div>
-              <p className="text-sm">${product.old_price}</p>
-              <p className="text-sm">${product.new_price}</p>
-              <div className="flex items-center gap-[5px]">
-                <div className="w-[5px] h-[5px] bg-green-400 rounded-full"></div>
-                <p className="text-sm">{product.category}</p>
-              </div>
-              <div className="rating flex items-center gap-[5px]">
-                <FaStar className="w-[13px] h-[13px] text-yellow-400" />
-                <p className="text-sm">4.9</p>
-                <p className="opacity-40 text-sm">35 Reviews</p>
+              <p
+                className="font-medium text-sm col-span-2 cursor-pointer"
+                onClick={() => {
+                  openUpdateModal(order._id);
+                }}
+              >
+                {order.orderNumber}
+              </p>
+              <p className="text-sm flex justify-center">{order.items.length} Product</p>
+              <p className="text-sm flex justify-center col-span-2">${order.totalAmount}</p>
+              <p className="text-sm truncate col-span-2">{order.shippingAddress}</p>
+              <p className="text-sm flex justify-center col-span-2">{order.phoneNumber}</p>
+              <div className="flex items-center justify-center gap-[5px] ">
+                <div
+                  className={`w-[5px] h-[5px] ${statusColor(order.status)} rounded-full haha`}
+                ></div>
+                <p className="text-sm">{order.status}</p>
               </div>
               <div className="flex justify-center relative cursor-pointer">
                 <CgMoreVertical
                   onClick={() => {
-                    handleOpen(product.id);
+                    handleOpen(order._id);
                   }}
                 />{" "}
-                {openProductId === product.id && (
-                  <div className="absolute top-[25px] left-[10px] w-max h-max p-[10px] bg-slate-100 text-xs z-10 flex flex-col gap-[5px]">
+                {openOrderId === order._id && (
+                  <div className="absolute top-[20px] left-[0px] w-max h-max p-[5px] bg-slate-100 text-xs z-10 flex flex-col gap-[5px]">
                     <div
                       className="flex items-center gap-[5px] hover:opacity-50 cursor-pointer"
                       onClick={() => {
-                        openUpdateModal(product.id);
+                        openUpdateModal(order._id);
                       }}
                     >
                       <MdEdit />
-                      <p className="text-xs">Edit Product</p>
+                      <p className="text-xs">Edit order</p>
                     </div>
                     <div
                       onClick={() => {
-                        removeProduct(product.id);
+                        removeOrder(order._id);
                       }}
                       className=" flex items-center gap-[5px] hover:opacity-50 cursor-pointer"
                     >
                       <MdDelete />
-                      <p className="text-xs">Remove Product</p>
+                      <p className="text-xs">Remove order</p>
                     </div>
                   </div>
                 )}
@@ -195,7 +205,7 @@ const Order = () => {
             <option value="8">8</option>
             <option value="9">9</option>
           </select>
-          <p>of {allProduct.length} products</p>
+          <p>of {allOrder.length} orders</p>
         </div>
 
         <ReactPaginate
@@ -210,7 +220,7 @@ const Order = () => {
           breakLabel="..."
           breakClassName="page-item"
           breakLinkClassName="page-link"
-          pageCount={Math.ceil(allProduct.length / limit)}
+          pageCount={Math.ceil(allOrder.length / limit)}
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
           containerClassName="pagination"
@@ -222,4 +232,4 @@ const Order = () => {
   );
 };
 
-export default Order;
+export default ListOrder;

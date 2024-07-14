@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
-import ListProduct from "../Components/ListProduct/ListProduct";
 import Sidebar from "../Components/Sidebar/Sidebar";
 import AddProduct from "../Components/AddProduct/AddProduct";
-import Order from "../Components/Order/Order";
+import ListProduct from "../Components/ListProduct/ListProduct";
+import ListOrder from "../Components/ListOrder/ListOrder";
 
 const Admin = () => {
   return (
@@ -16,7 +16,7 @@ const Admin = () => {
             <Route path="/" element={<ListProduct />}></Route>
             <Route path="/addproduct" element={<AddProduct />}></Route>
             <Route path="/products" element={<ListProduct />}></Route>
-            <Route path="/order" element={<Order />}></Route>
+            <Route path="/order" element={<ListOrder />}></Route>
           </Routes>
         </div>
       </div>

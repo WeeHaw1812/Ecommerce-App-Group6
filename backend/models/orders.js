@@ -12,6 +12,10 @@ const orderSchema = new Schema({
     ref: "User",
     required: true,
   },
+  fullName: {
+    type: String,
+    required: true,
+  },
   items: [
     {
       productId: {

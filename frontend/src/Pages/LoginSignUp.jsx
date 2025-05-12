@@ -13,7 +13,7 @@ const LoginSignUp = () => {
   const login = async () => {
     console.log("Login", formData);
     let responseData;
-    await fetch("http://localhost:4000/user/login", {
+    await fetch("https://eg6-backend.onrender.com/user/login", {
       method: "POST",
       headers: {
         Accept: "application/form-data",
@@ -34,7 +34,7 @@ const LoginSignUp = () => {
   const signup = async () => {
     console.log("Sign Up", formData);
     let responseData;
-    await fetch("http://localhost:4000/user", {
+    await fetch("https://eg6-backend.onrender.com/user", {
       method: "POST",
       headers: {
         Accept: "application/form-data",

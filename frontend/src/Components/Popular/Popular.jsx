@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./Popular.css";
-import data_product from "../../Assets/data";
+
 import Item from "../Item/Item";
+import { ShopContext } from "../../Context/ShopContext";
 
 const Popular = () => {
+  const { all_product } = useContext(ShopContext);
+
+  // Lọc các sản phẩm thuộc danh mục "Women" và lấy 4 sản phẩm đầu tiên
+  const womenProducts = all_product.filter((item) => item.category === "Women").slice(0, 4);
+
   return (
     <div className="popular">
-      <h1>POPULAR IN WOMEN</h1>
+      <h1>POPULAR IN SHOP</h1>
       <hr />
       <div className="popular-item py-[30px]">
-        {data_product.map((item, i) => {
+        {womenProducts.map((item, i) => {
           return (
             <Item
               key={i}

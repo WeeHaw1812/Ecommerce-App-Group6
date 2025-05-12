@@ -17,12 +17,12 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/" element={<Shop />}></Route>
-          <Route path="/men" element={<ShopCategory banner={men_banner} category="men" />}></Route>
+          <Route path="/men" element={<ShopCategory banner={men_banner} category="Men" />}></Route>
           <Route
             path="/women"
-            element={<ShopCategory banner={women_banner} category="women" />}
+            element={<ShopCategory banner={women_banner} category="Women" />}
           ></Route>
-          <Route path="/kids" element={<ShopCategory banner={kid_banner} category="kid" />}></Route>
+          <Route path="/kids" element={<ShopCategory banner={kid_banner} category="Kid" />}></Route>
           <Route path="/login" element={<LoginSignUp />}></Route>
           <Route path="/cart" element={<Cart />}></Route>
           <Route path="/product" element={<Product />}></Route>

@@ -74,7 +74,7 @@ const ProceedOrder = ({ handleClose, totalPrice }) => {
     };
 
     try {
-      const response = await fetch("http://localhost:4000/order", {
+      const response = await fetch("https://eg6-backend.onrender.com/order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

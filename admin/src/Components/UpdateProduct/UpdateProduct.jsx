@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { CgCloseO } from "react-icons/cg";
-import upload from "../../assets/upload_area.svg"; // Import the placeholder image
+import upload from "../../assets/upload_area.svg";
 
 const UpdateProduct = ({ idProduct, closeModal, updateSuccess }) => {
-  const [image, setImage] = useState(false); // For new image file
+  const [image, setImage] = useState(null); // For new image file, initialize as null
   const [productDetails, setProductDetails] = useState({
     name: "",
     description: "",
@@ -12,6 +12,8 @@ const UpdateProduct = ({ idProduct, closeModal, updateSuccess }) => {
     new_price: "",
     old_price: "",
   });
+  const [loading, setLoading] = useState(true); // Thêm trạng thái tải
+  const [error, setError] = useState(null); // Thêm trạng thái lỗi
 
   const imageHandler = (e) => {
     setImage(e.target.files[0]); // Store the new image file
@@ -23,16 +25,29 @@ const UpdateProduct = ({ idProduct, closeModal, updateSuccess }) => {
 
   // Fetch Product
   const fetchProductById = async () => {
-    const response = await fetch(`http://localhost:4000/product/${idProduct}`);
-    const productData = await response.json();
-    setProductDetails({
-      name: productData.name || "",
-      description: productData.description || "",
-      image: productData.image || "", // Existing image URL
-      category: productData.category || "Women",
-      new_price: productData.new_price || "",
-      old_price: productData.old_price || "",
-    });
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(`https://eg6-backend.onrender.com/product/${idProduct}`);
+      const productData = await response.json();
+      if (productData.success) {
+        setProductDetails({
+          name: productData.data.name || "",
+          description: productData.data.description || "",
+          image: productData.data.image || "",
+          category: productData.data.category || "Women",
+          new_price: productData.data.new_price || "",
+          old_price: productData.data.old_price || "",
+        });
+      } else {
+        setError("Product not found");
+      }
+    } catch (error) {
+      console.error("Error fetching product:", error);
+      setError("Failed to fetch product data");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -50,7 +65,7 @@ const UpdateProduct = ({ idProduct, closeModal, updateSuccess }) => {
         let formData = new FormData();
         formData.append("product", image);
 
-        const uploadResponse = await fetch("http://localhost:4000/upload", {
+        const uploadResponse = await fetch("https://eg6-backend.onrender.com/upload", {
           method: "POST",
           headers: {
             Accept: "application/json",
@@ -60,7 +75,7 @@ const UpdateProduct = ({ idProduct, closeModal, updateSuccess }) => {
 
         const uploadData = await uploadResponse.json();
         if (!uploadData.success) {
-          throw new Error("Image upload failed");
+          throw new Error("Image upload failed: " + (uploadData.message || ""));
         }
 
         updatedImage = uploadData.image_url; // Update with new image URL
@@ -69,14 +84,14 @@ const UpdateProduct = ({ idProduct, closeModal, updateSuccess }) => {
       // Update the product with the new or existing image
       updatedProduct.image = updatedImage;
 
-      const response = await fetch(`http://localhost:4000/product/`, {
+      const response = await fetch(`https://eg6-backend.onrender.com/product/${idProduct}`, {
+        // Sửa endpoint để sử dụng id trong URL
         method: "PUT",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          id: idProduct,
           ...updatedProduct,
         }),
       });
@@ -87,13 +102,26 @@ const UpdateProduct = ({ idProduct, closeModal, updateSuccess }) => {
         closeModal();
         updateSuccess();
       } else {
-        alert("Failed to Update Product");
+        alert("Failed to Update Product: " + (data.message || ""));
       }
     } catch (error) {
       console.error("Failed to Process:", error);
-      alert("Failed to Process");
+      alert("Failed to Process: " + error.message);
     }
   };
+
+  if (loading)
+    return (
+      <div className="w-[400px] h-[440px] bg-slate-100 flex items-center justify-center">
+        Loading...
+      </div>
+    );
+  if (error)
+    return (
+      <div className="w-[400px] h-[440px] bg-slate-100 flex items-center justify-center text-red-500">
+        {error}
+      </div>
+    );
 
   return (
     <div className="w-[400px] h-[440px] bg-slate-100">
@@ -157,9 +185,7 @@ const UpdateProduct = ({ idProduct, closeModal, updateSuccess }) => {
             <label htmlFor="file-input">
               <img
                 className="w-[100px] h-[100px]"
-                src={
-                  image ? URL.createObjectURL(image) : productDetails.image || upload // Fallback to placeholder if no image
-                }
+                src={image ? URL.createObjectURL(image) : productDetails.image || upload}
                 alt="Product"
               />
             </label>
@@ -173,9 +199,9 @@ const UpdateProduct = ({ idProduct, closeModal, updateSuccess }) => {
               value={productDetails.category}
               onChange={changeHandler}
             >
-              <option value="women">Women</option>
-              <option value="men">Men</option>
-              <option value="kid">Kid</option>
+              <option value="Women">Women</option>
+              <option value="Men">Men</option>
+              <option value="Kid">Kid</option>
             </select>
           </div>
         </div>

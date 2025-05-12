@@ -18,7 +18,7 @@ const ListProduct = () => {
   // Get All for Total Count
   const fetchInfo = async () => {
     try {
-      const res = await fetch("http://localhost:4000/product");
+      const res = await fetch("https://eg6-backend.onrender.com/product");
       const data = await res.json();
       if (data.success) {
         setAllProduct(data.data);
@@ -37,7 +37,9 @@ const ListProduct = () => {
   // Get Product Page
   const fetchProductPage = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/product?page=${page}&limit=${limit}`);
+      const res = await fetch(
+        `https://eg6-backend.onrender.com/product?page=${page}&limit=${limit}`
+      );
       const data = await res.json();
       if (data.success) {
         setProductPage(data.data); // Set to the array of products
@@ -64,7 +66,7 @@ const ListProduct = () => {
   // Remove Product
   const removeProduct = async (id) => {
     try {
-      const res = await fetch(`http://localhost:4000/product/${id}`, {
+      const res = await fetch(`https://eg6-backend.onrender.com/product/${id}`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",

@@ -18,10 +18,11 @@ const UpdateOrder = ({ idOrder, closeModal, updateSuccess }) => {
   };
   // Map Product API in items
   const [products, setProducts] = useState([]);
+
   console.log("Products", products);
   const fetchOrderById = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/order/${idOrder}`);
+      const response = await fetch(`https://eg6-backend.onrender.com/order/${idOrder}`);
       const orderData = await response.json();
       console.log("Order Data", orderData);
       setOrderDetails({
@@ -38,7 +39,7 @@ const UpdateOrder = ({ idOrder, closeModal, updateSuccess }) => {
       // Fetch product details
       const fetchProductDetails = async (productId) => {
         try {
-          const response = await fetch(`http://localhost:4000/product/${productId}`);
+          const response = await fetch(`https://eg6-backend.onrender.com/product/${productId}`);
           return await response.json();
         } catch (error) {
           console.error(`Error fetching product ${productId}:`, error);
@@ -76,7 +77,7 @@ const UpdateOrder = ({ idOrder, closeModal, updateSuccess }) => {
 
   const updateOrderById = async () => {
     try {
-      const response = await fetch(`http://localhost:4000/order/${idOrder}`, {
+      const response = await fetch(`https://eg6-backend.onrender.com/order/${idOrder}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -133,7 +134,7 @@ const UpdateOrder = ({ idOrder, closeModal, updateSuccess }) => {
                   key={e.id}
                   className="w-full grid grid-cols-5 gap-4 items-center py-[10px] border-b-black border-b-[1px] last:border-none"
                 >
-                  <img className="col-span-1 h-[40px]" src={e.image} alt="" />
+                  <img className="col-span-1 h-[40px]" src={e.data.image} alt="" />
                   <div className="flex flex-col col-span-2 text-xs">
                     <div className="flex gap-2 items-center font-bold">
                       <p className="w-[20px] truncate">{e.name}</p>

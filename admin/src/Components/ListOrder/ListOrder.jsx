@@ -14,7 +14,7 @@ const ListOrder = () => {
 
   // Get All for Pagination
   const fetchInfo = async () => {
-    await fetch("http://localhost:4000/order")
+    await fetch("https://eg6-backend.onrender.com/order")
       .then((res) => res.json())
       .then((data) => {
         setAllOrder(data);
@@ -25,7 +25,7 @@ const ListOrder = () => {
   }, []);
   // Get order Page
   const fetchOrderPage = async () => {
-    await fetch(`http://localhost:4000/order?page=${page}&limit=${limit}`)
+    await fetch(`https://eg6-backend.onrender.com/order?page=${page}&limit=${limit}`)
       .then((res) => res.json())
       .then((data) => {
         setOrderPage(data);
@@ -41,7 +41,7 @@ const ListOrder = () => {
   };
   // Remove order
   const removeOrder = async (id) => {
-    await fetch(`http://localhost:4000/order/${id}`, {
+    await fetch(`https://eg6-backend.onrender.com/order/${id}`, {
       method: "DELETE",
       headers: {
         Accept: "application/json",

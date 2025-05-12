@@ -12,7 +12,9 @@ const usersRouter = require("./routes/usersRouter");
 const ordersRouter = require("./routes/ordersRouter");
 const products = require("./models/products");
 // Database Connection with MongoDB
-mongoose.connect("mongodb+srv://loneacc195:195@cluster0.qf5rb9y.mongodb.net/e-commerce");
+mongoose.connect(
+  "mongodb+srv://loneacc195:loneacc195@cluster0.x6asbkr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+);
 // Fake Data for Pagination
 // for (let i = 0; i < 20; i++) {
 //   {

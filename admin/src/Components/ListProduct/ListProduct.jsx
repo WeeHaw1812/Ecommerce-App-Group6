@@ -7,52 +7,82 @@ import ReactPaginate from "react-paginate";
 import { MdDelete, MdEdit, MdNavigateBefore, MdNavigateNext } from "react-icons/md";
 import { useEffect, useState } from "react";
 import UpdateProduct from "../UpdateProduct/UpdateProduct";
+
 const ListProduct = () => {
   const [allProduct, setAllProduct] = useState([]);
   const [productPage, setProductPage] = useState([]);
+  const [pagination, setPagination] = useState({ page: 1, limit: 6, total: 0, totalPages: 0 });
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(6);
 
-  // Get All for Pagination
+  // Get All for Total Count
   const fetchInfo = async () => {
-    await fetch("http://localhost:4000/product")
-      .then((res) => res.json())
-      .then((data) => {
-        setAllProduct(data);
-      });
+    try {
+      const res = await fetch("http://localhost:4000/product");
+      const data = await res.json();
+      if (data.success) {
+        setAllProduct(data.data);
+      } else {
+        console.error("Failed to fetch all products:", data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching all products:", error);
+    }
   };
+
   useEffect(() => {
     fetchInfo();
   }, []);
+
   // Get Product Page
   const fetchProductPage = async () => {
-    await fetch(`http://localhost:4000/product?page=${page}&limit=${limit}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setProductPage(data);
-      });
+    try {
+      const res = await fetch(`http://localhost:4000/product?page=${page}&limit=${limit}`);
+      const data = await res.json();
+      if (data.success) {
+        setProductPage(data.data); // Set to the array of products
+        setPagination(data.pagination); // Store pagination metadata
+      } else {
+        console.error("Failed to fetch product page:", data.message);
+        setProductPage([]); // Fallback to empty array on failure
+      }
+    } catch (error) {
+      console.error("Error fetching product page:", error);
+      setProductPage([]); // Fallback to empty array on error
+    }
   };
+
   useEffect(() => {
     fetchProductPage();
   }, [page, limit]);
-  // Change Page
+
   // Handle Page Click
   const handlePageClick = (selectedItem) => {
-    setPage(parseInt(selectedItem.selected) + 1); // +1 because ReactPaginate uses 0-based index
+    setPage(selectedItem.selected + 1); // +1 because ReactPaginate uses 0-based index
   };
+
   // Remove Product
   const removeProduct = async (id) => {
-    await fetch("http://localhost:4000/product", {
-      method: "DELETE",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: id }),
-    });
-    await fetchProductPage();
-    await fetchInfo();
+    try {
+      const res = await fetch(`http://localhost:4000/product/${id}`, {
+        method: "DELETE",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (data.success) {
+        await fetchProductPage();
+        await fetchInfo();
+      } else {
+        console.error("Failed to remove product:", data.message);
+      }
+    } catch (error) {
+      console.error("Error removing product:", error);
+    }
   };
+
   // More Button
   const [openProductId, setOpenProductId] = useState(null);
   const handleOpen = (idProduct) => {
@@ -62,6 +92,7 @@ const ListProduct = () => {
       setOpenProductId(idProduct);
     }
   };
+
   // Update Modal
   const [openUpdateProductModalById, setUpdateProductModal] = useState(null);
   const openUpdateModal = (idProduct) => {
@@ -76,6 +107,7 @@ const ListProduct = () => {
   };
   const updateSuccess = () => {
     fetchProductPage();
+    fetchInfo();
   };
 
   return (
@@ -106,14 +138,16 @@ const ListProduct = () => {
         <div className="title-table grid grid-cols-7 py-[10px]">
           <div className="col-span-2 font-semibold">Item Name</div>
           <div className="font-semibold">Old Price</div>
-          <div className="font-semibold ">New Price</div>
+          <div className="font-semibold">New Price</div>
           <div className="font-semibold">Category</div>
           <div className="font-semibold">Rating</div>
           <div></div>
         </div>
-        {/**Sử dụng map theo Product Page*/}
-        {productPage.map((product, index) => {
-          return (
+        {/** Render Product Page */}
+        {productPage.length === 0 ? (
+          <p className="text-center py-[20px]">No products found</p>
+        ) : (
+          productPage.map((product, index) => (
             <div
               key={index}
               className="content-table grid grid-cols-7 items-center border-t-[1px] border-t-gray-300"
@@ -123,9 +157,7 @@ const ListProduct = () => {
                   <UpdateProduct
                     idProduct={product.id}
                     closeModal={closeUpdateModal}
-                    updateSuccess={() => {
-                      updateSuccess();
-                    }}
+                    updateSuccess={updateSuccess}
                   />
                 </div>
               )}
@@ -152,7 +184,7 @@ const ListProduct = () => {
                   onClick={() => {
                     handleOpen(product.id);
                   }}
-                />{" "}
+                />
                 {openProductId === product.id && (
                   <div className="absolute top-[25px] left-[10px] w-max h-max p-[10px] bg-slate-100 text-xs z-10 flex flex-col gap-[5px]">
                     <div
@@ -168,7 +200,7 @@ const ListProduct = () => {
                       onClick={() => {
                         removeProduct(product.id);
                       }}
-                      className=" flex items-center gap-[5px] hover:opacity-50 cursor-pointer"
+                      className="flex items-center gap-[5px] hover:opacity-50 cursor-pointer"
                     >
                       <MdDelete />
                       <p className="text-xs">Remove Product</p>
@@ -177,8 +209,8 @@ const ListProduct = () => {
                 )}
               </div>
             </div>
-          );
-        })}
+          ))
+        )}
       </div>
       {/**========PAGINATION====== */}
       <div className="flex items-center justify-between">
@@ -189,6 +221,7 @@ const ListProduct = () => {
             value={limit}
             onChange={(e) => {
               setLimit(parseInt(e.target.value));
+              setPage(1); // Reset to page 1 when limit changes
             }}
           >
             <option value="6">6</option>
@@ -196,7 +229,7 @@ const ListProduct = () => {
             <option value="8">8</option>
             <option value="9">9</option>
           </select>
-          <p>of {allProduct.length} products</p>
+          <p>of {pagination.total} products</p>
         </div>
 
         <ReactPaginate
@@ -211,7 +244,7 @@ const ListProduct = () => {
           breakLabel="..."
           breakClassName="page-item"
           breakLinkClassName="page-link"
-          pageCount={Math.ceil(allProduct.length / limit)}
+          pageCount={pagination.totalPages} // Use totalPages from API response
           marginPagesDisplayed={2}
           pageRangeDisplayed={5}
           containerClassName="pagination"
